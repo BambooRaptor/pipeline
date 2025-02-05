@@ -39,14 +39,6 @@ func (p Pipeline[T]) Resolve(val T) T {
 	return val
 }
 
-func reverse[T any](arr []T) []T {
-	list := make([]T, 0, len(arr))
-	for i := range len(arr) {
-		list = append(list, arr[len(arr)-1-i])
-	}
-	return list
-}
-
 // Closes the pipeline and returns the final function/interface
 // NOTE: Use when the the pipes are building a function,
 // that need to be embedded within each other
@@ -65,4 +57,13 @@ func (p Pipeline[T]) IntoRaw(funcs ...Pipe[T]) Pipeline[T] {
 // Pipe the data from a pipeline into another pipeline
 func (p Pipeline[T]) Into(pl Pipeline[T]) Pipeline[T] {
 	return p.IntoRaw(pl.pipes...)
+}
+
+// UTIL FUNCS
+func reverse[T any](arr []T) []T {
+	list := make([]T, 0, len(arr))
+	for i := range len(arr) {
+		list = append(list, arr[len(arr)-1-i])
+	}
+	return list
 }
