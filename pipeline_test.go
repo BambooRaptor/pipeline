@@ -14,7 +14,7 @@ type testConfig struct {
 var defaultConfig = testConfig{10, "default", "Default Config"}
 
 func buildConfig(opts ...Pipe[testConfig]) testConfig {
-	return New(opts...).CloseWith(defaultConfig)
+	return New(opts...).Resolve(defaultConfig)
 }
 
 func setName(name string) Pipe[testConfig] {
@@ -111,12 +111,12 @@ func TestInterfacePipeline(t *testing.T) {
 	line1 := New(
 		add(5),
 		mult(10),
-	).EmbedFinal(checkFinalInt(t, 70))
+	).Build(checkFinalInt(t, 70))
 	line1.Use(2)
 
 	line2 := New(
 		mult(10),
 		add(5),
-	).EmbedFinal(checkFinalInt(t, 25))
+	).Build(checkFinalInt(t, 25))
 	line2.Use(2)
 }
