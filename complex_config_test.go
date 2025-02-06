@@ -1,7 +1,6 @@
 package pipeline_test
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
