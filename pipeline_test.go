@@ -1,8 +1,10 @@
-package pipeline
+package pipeline_test
 
 import (
 	"fmt"
 	"testing"
+
+	"github.com/BambooRaptor/pipeline"
 )
 
 type testConfig struct {
@@ -13,25 +15,25 @@ type testConfig struct {
 
 var defaultConfig = testConfig{10, "default", "Default Config"}
 
-func buildConfig(opts ...Pipe[testConfig]) testConfig {
-	return New(opts...).Resolve(defaultConfig)
+func buildConfig(opts ...pipeline.Pipe[testConfig]) testConfig {
+	return pipeline.New(opts...).Resolve(defaultConfig)
 }
 
-func setName(name string) Pipe[testConfig] {
+func setName(name string) pipeline.Pipe[testConfig] {
 	return func(c testConfig) testConfig {
 		c.name = name
 		return c
 	}
 }
 
-func setId(id string) Pipe[testConfig] {
+func setId(id string) pipeline.Pipe[testConfig] {
 	return func(c testConfig) testConfig {
 		c.id = id
 		return c
 	}
 }
 
-func addConns(amount uint) Pipe[testConfig] {
+func addConns(amount uint) pipeline.Pipe[testConfig] {
 	return func(c testConfig) testConfig {
 		c.maxConn += amount
 		return c
@@ -76,7 +78,7 @@ func (i intUser) Use(num int) {
 	i(num)
 }
 
-func add(amount int) Pipe[testInterface] {
+func add(amount int) pipeline.Pipe[testInterface] {
 	return func(p testInterface) testInterface {
 		return intUser(func(num int) {
 			p.Use(amount + num)
@@ -84,7 +86,7 @@ func add(amount int) Pipe[testInterface] {
 	}
 }
 
-func mult(amount int) Pipe[testInterface] {
+func mult(amount int) pipeline.Pipe[testInterface] {
 	return func(p testInterface) testInterface {
 		return intUser(func(num int) {
 			p.Use(amount * num)
@@ -108,13 +110,13 @@ func (i testIntChecker) Use(num int) {
 }
 
 func TestInterfacePipeline(t *testing.T) {
-	line1 := New(
+	line1 := pipeline.New(
 		add(5),
 		mult(10),
 	).Build(checkFinalInt(t, 70))
 	line1.Use(2)
 
-	line2 := New(
+	line2 := pipeline.New(
 		mult(10),
 		add(5),
 	).Build(checkFinalInt(t, 25))
